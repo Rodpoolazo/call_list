@@ -1,0 +1,199 @@
+Last login: Mon Jul  1 20:04:05 on ttys001
+MacBook-Pro-de-Rodpoolazo:~ rod$ /Applications/Postgres.app/Contents/Versions/11/bin/psql -p5432 "ejemplo"
+psql (11.4)
+Type "help" for help.
+
+ejemplo=# CREATE DATABASE call_list
+ejemplo-# ;
+CREATE DATABASE
+ejemplo=# \d
+              List of relations
+ Schema |      Name       |   Type   | Owner 
+--------+-----------------+----------+-------
+ public | movies          | table    | rod
+ public | products        | table    | rod
+ public | products_id_seq | sequence | rod
+(3 rows)
+
+ejemplo=# \c call_list
+You are now connected to database "call_list" as user "rod".
+call_list=# CREATE TABLE users (id Integer, first_name VARCAHAR(50), email VARCHAR(60));
+ERROR:  type "varcahar" does not exist
+LINE 1: CREATE TABLE users (id Integer, first_name VARCAHAR(50), ema...
+                                                   ^
+call_list=# CREATE TABLE users (id Integer, first_name VARCHAR(50), email VARCHAR(60));
+CREATE TABLE
+call_list=# INSERT INTO users VALUES(1, 'Carlos', 'carlos@yahoo.com');
+INSERT 0 1
+call_list=# INSERT INTO users VALUES(2, 'Laura', 'laura@hotmail.com');
+INSERT 0 1
+call_list=# CREATE TABLE calls (id Integer, phone VARCHAR(10), date TIMESTAMP, user_id Integer);
+CREATE TABLE
+call_list=# ALTER TABLE calls ADD COLUMN length Integer;
+ALTER TABLE
+call_list=# ALTER TABLE users ADD COLUMN last_name Integer;
+ALTER TABLE
+call_list=# ISERT INTO users (last_name, id) VALUES('Perez', 1);
+ERROR:  syntax error at or near "ISERT"
+LINE 1: ISERT INTO users (last_name, id) VALUES('Perez', 1);
+        ^
+call_list=# INSERT INTO users (last_name, id) VALUES('Perez', 1);
+ERROR:  invalid input syntax for integer: "Perez"
+LINE 1: INSERT INTO users (last_name, id) VALUES('Perez', 1);
+                                                 ^
+call_list=# ALTER TABLE users ALTER COLUMN last_name SET DATA TYPE VARCHAR(50);
+ALTER TABLE
+call_list=# INSERT INTO users (last_name, id) VALUES('Perez', 1);
+INSERT 0 1
+call_list=# INSERT INTO users (last_name, id) VALUES('Soto', 2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, 06/05/2019, 3,2);
+ERROR:  column "date" is of type timestamp without time zone but expression is of type integer
+LINE 1: ... phone, date,length, user_id) VALUES(1,998216602, 06/05/2019...
+                                                             ^
+HINT:  You will need to rewrite or cast the expression.
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, 06/05/2019, 3 ,2);
+ERROR:  column "date" is of type timestamp without time zone but expression is of type integer
+LINE 1: ... phone, date,length, user_id) VALUES(1,998216602, 06/05/2019...
+                                                             ^
+HINT:  You will need to rewrite or cast the expression.
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, 20190701, 3 ,2);
+ERROR:  column "date" is of type timestamp without time zone but expression is of type integer
+LINE 1: ... phone, date,length, user_id) VALUES(1,998216602, 20190701, ...
+                                                             ^
+HINT:  You will need to rewrite or cast the expression.
+call_list=# ALTER TABLE calls ALTER COLUMN date SET DATA TYPE DATE
+call_list-# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, 06/05/2019, 3 ,2);
+ERROR:  syntax error at or near "INSERT"
+LINE 2: INSERT INTO calls (id, phone, date,length, user_id) VALUES(1...
+        ^
+call_list=# ALTER TABLE calls ALTER COLUMN date SET DATA TYPE DATE;             ALTER TABLE
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, 06/05/2019, 3 ,2);    
+ERROR:  column "date" is of type date but expression is of type integer
+LINE 1: ... phone, date,length, user_id) VALUES(1,998216602, 06/05/2019...
+                                                             ^
+HINT:  You will need to rewrite or cast the expression.
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(1,998216602, '06/05/2019', 3 ,2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(2,997482152, '16/05/2019',4 ,2);
+ERROR:  date/time field value out of range: "16/05/2019"
+LINE 1: ... phone, date,length, user_id) VALUES(2,997482152, '16/05/201...
+                                                             ^
+HINT:  Perhaps you need a different "datestyle" setting.
+call_list=# SELECT * FROM calls;
+ id |   phone   |    date    | user_id | length 
+----+-----------+------------+---------+--------
+  1 | 998216602 | 2019-06-05 |       2 |      3
+(1 row)
+
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(2,997482152, '2019-05-16',4 ,2);
+INSERT 0 1
+call_list=# SELECT id, length, user_id FROM calls;                              
+ id | length | user_id 
+----+--------+---------
+  1 |      3 |       2
+  2 |      4 |       2
+(2 rows)
+
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(3,983499748, '2019-05-17',8 ,2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(4,223499748, '2019-05-20',1,2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(5,224782349, '2019-05-24',6,2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(6,865234722, '2019-06-04',16,2);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(7,865234722, '2019-04-14',1,1);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(8,235728652, '2019-04-18',8,1);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(9,984359001, '2019-05-08',18,1);
+INSERT 0 1
+call_list=# INSERT INTO calls (id, phone, date,length, user_id) VALUES(10,98435900, '2019-05-19',2,1);
+INSERT 0 1
+call_list=# INSERT INTO users (id, first_name, last_name, email) VALUES(3, 'PEDRO', 'Sanchez', 'pedro@telsac.com');
+INSERT 0 1
+call_list=# SELECT * FROM users;
+ id | first_name |       email       | last_name 
+----+------------+-------------------+-----------
+  1 | Carlos     | carlos@yahoo.com  | 
+  2 | Laura      | laura@hotmail.com | 
+  1 |            |                   | Perez
+  2 |            |                   | Soto
+  3 | PEDRO      | pedro@telsac.com  | Sanchez
+(5 rows)
+
+call_list=# SELECT * FROM calls;
+ id |   phone   |    date    | user_id | length 
+----+-----------+------------+---------+--------
+  1 | 998216602 | 2019-06-05 |       2 |      3
+  2 | 997482152 | 2019-05-16 |       2 |      4
+  3 | 983499748 | 2019-05-17 |       2 |      8
+  4 | 223499748 | 2019-05-20 |       2 |      1
+  5 | 224782349 | 2019-05-24 |       2 |      6
+  6 | 865234722 | 2019-06-04 |       2 |     16
+  7 | 865234722 | 2019-04-14 |       1 |      1
+  8 | 235728652 | 2019-04-18 |       1 |      8
+  9 | 984359001 | 2019-05-08 |       1 |     18
+ 10 | 98435900  | 2019-05-19 |       1 |      2
+(10 rows)
+
+call_list=# DELETE FROM users WHERE last_name = 'Perez';
+DELETE 1
+call_list=# SELECT * FROM users;
+ id | first_name |       email       | last_name 
+----+------------+-------------------+-----------
+  1 | Carlos     | carlos@yahoo.com  | 
+  2 | Laura      | laura@hotmail.com | 
+  2 |            |                   | Soto
+  3 | PEDRO      | pedro@telsac.com  | Sanchez
+(4 rows)
+
+call_list=# DELETE FROM users WHERE last_name = 'Soto';
+DELETE 1
+call_list=# UPDATE users SET last_name = 'Perez' WHERE id = 1;
+UPDATE 1
+call_list=# SELECT * FROM users;
+ id | first_name |       email       | last_name 
+----+------------+-------------------+-----------
+  2 | Laura      | laura@hotmail.com | 
+  3 | PEDRO      | pedro@telsac.com  | Sanchez
+  1 | Carlos     | carlos@yahoo.com  | Perez
+(3 rows)
+
+call_list=# UPDATE users SET last_name = 'Soto' WHERE id = 2;
+UPDATE 1
+call_list=# SELECT * FROM users;
+ id | first_name |       email       | last_name 
+----+------------+-------------------+-----------
+  3 | PEDRO      | pedro@telsac.com  | Sanchez
+  1 | Carlos     | carlos@yahoo.com  | Perez
+  2 | Laura      | laura@hotmail.com | Soto
+(3 rows)
+
+call_list=# SELECT COUNT (*) FROM calls ORDER BY users;
+ERROR:  column "users" does not exist
+LINE 1: SELECT COUNT (*) FROM calls ORDER BY users;
+                                             ^
+call_list=# SELECT COUNT (*) FROM calls ORDER BY name;
+ERROR:  column "name" does not exist
+LINE 1: SELECT COUNT (*) FROM calls ORDER BY name;
+                                             ^
+HINT:  Perhaps you meant to reference the column "calls.date".
+call_list=# SELECT calls COUNT (*) FROM calls ORDER BY name;
+ERROR:  syntax error at or near "("
+LINE 1: SELECT calls COUNT (*) FROM calls ORDER BY name;
+                           ^
+call_list=# SELECT length COUNT (*) FROM calls ORDER BY name;
+ERROR:  syntax error at or near "("
+LINE 1: SELECT length COUNT (*) FROM calls ORDER BY name;
+                            ^
+call_list=# SELECT calls COUNT (length) FROM calls ORDER BY name;
+ERROR:  syntax error at or near "("
+LINE 1: SELECT calls COUNT (length) FROM calls ORDER BY name;
+                           ^
+call_list=# SELECT length COUNT (calls) FROM calls ORDER BY name;
+ERROR:  syntax error at or near "("
+LINE 1: SELECT length COUNT (calls) FROM calls ORDER BY name;
+                            ^
+call_list=# 
